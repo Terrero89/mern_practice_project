@@ -8,20 +8,31 @@ const getWorkoutsController = async (req, res) => {
 
 //?create new workout controller
 const createWorkoutController = async (req, res) => {
-  const { title, load, reps } = req.body; //extracted from middleware
-  //try.catch to get data or post data in case of error async
+  const {title, load, reps} = req.body
 
-  try {
-    const workout = await Workout.create({ title, load, reps }); //workout object
-    //send response
-    res.status(200).json(workout); //create dicument based on workout object
-    // res.json(workout);
-  } catch (error) {
-    console.log(error);
-    res.status(400).json({ error: error.message }); //retuurning error if error
+  let emptyFields = []
+
+  if (!title) {
+    emptyFields.push('title')
   }
-};
+  if (!load) {
+    emptyFields.push('load')
+  }
+  if (!reps) {
+    emptyFields.push('reps')
+  }
+  if (emptyFields.length > 0) {
+    return res.status(400).json({ error: 'Please fill in all fields', emptyFields })
+  }
 
+  // add to the database
+  try {
+    const workout = await Workout.create({ title, load, reps })
+    res.status(200).json(workout)
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+}
 //get single workout controller
 
 const getWorkoutController = async (req, res) => {
