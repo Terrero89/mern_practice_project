@@ -28,7 +28,7 @@ userSchema.statics.signup = async function (email, password) {
   if (!validator.isEmail(email)) {
     throw Error("Email is not valid");
   }
-//checks if passwd is strong. returns Bool
+  //checks if passwd is strong. returns Bool
   if (!validator.isStrongPassword(password)) {
     throw Error("Password is not strong enough");
   }
@@ -45,6 +45,27 @@ userSchema.statics.signup = async function (email, password) {
   const user = await this.create({ email, password: hash });
   //returning user information if all is ok
   return user;
+};
+
+//? static login method
+userSchema.statics.login = async function (email, password) {
+  //validation
+  if (!email || !password) {
+    throw Error("All fields must be filled");
+  }
+
+  const user = await this.findOne({ email }); //find email
+
+  if (!user) {
+    throw Error("Email does not exist");
+  }
+  //? compare the hash from signup
+  const match = await bcrypt.compare(password, user.password); //compares current and hashed password to make sure is correct
+  if (!match) {
+    throw Error("Incorrect Password");
+  }
+
+  return user
 };
 //MODEL --> passes UserSchema... 'user' is the collection
 module.exports = mongoose.model("User", userSchema);

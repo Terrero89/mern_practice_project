@@ -11,7 +11,18 @@ const createToken = (_id) => {
 
 //login user controller
 const loginUser = async (req, res) => {
-  res.json({ message: "login user..." });
+ const {email,password} =  req.body
+
+ try {
+    const user = await User.login(email, password); //momngoose method for login
+    //? CREATE A TOKEN HERE.
+    const token = createToken(user._id);
+
+//instead of user, we pass to jws a token with hte token created id topass it to the browser
+    res.status(200).json({ email, token});
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 };
 
 //signup user controller
