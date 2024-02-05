@@ -7,10 +7,15 @@ const {
   updateWorkoutController,
   deleteWorkoutController
 } = require("../controllers/workoutController");
+
+const requireAuth = require("../middleware/requireAuth")
+
 const router = express.Router(); //instance of router
 
-//ROUTE HANDLER FUNCTIONS
 
+//middleware function are supposed to be called before the route should be protected  ;
+router.use(requireAuth) //it protect the routes from unauthorized users
+//ROUTE HANDLER FUNCTIONS
 router.get("/", getWorkoutsController);
 
 //GET SINGLE WORKOUT
@@ -24,4 +29,4 @@ router.delete("/:id", deleteWorkoutController);
 //update workout
 router.patch("/:id", updateWorkoutController);
 
-module.exports = router;
+module.exports = router
